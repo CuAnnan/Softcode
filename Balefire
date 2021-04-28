@@ -1,0 +1,18 @@
+@create %x<#FF0000>B%x<#FF5F00>a%x<#FF8700>l%x<#FFAF00>ef%x<#FF8700>i%x<#FF5F00>r%x<#FF0000>e=10
+@lock Balefire=*Conn
+&VAR.LEVEL Balefire=2
+@Desc Balefire=%r%rThe Balefire's [ifelse(gt(v(var.availableGlamour),0),%xh%xrflame,%xrflame)]%xn glows with a [ifelse(gt(v(var.availableGlamour),0),warm,dim)] light indicating it has [ifelse(gt(v(var.availableGlamour),0),some,no)] glamour to yield.%r%rCommands:%r%t+draw glamour: Draws a point of glamour from the balefire's pool. You can never draw more glamour than the balefire has.
+&VAR.AVAILABLEGLAMOUR Balefire=2
+&LOOP.REFRESH Balefire=@set me=var.availableglamour:[get(me/var.level)]; @name me=[u(me/var.fullname)]; @wait 86400 = @trigger me/loop.refresh
+&CMD.DRAW Balefire=$+draw Glamour:@if [gt(v(var.availableGlamour),0)] = {@set me=var.availableGlamour:[add(-1, v(var.availableGlamour))]; @pemit %#=[ifelse(v(var.availableGlamour), get_eval(me/txt.pemit.glamourDrawn),get_eval(me/txt.pemit.glamourdrawn.last))]; @oemit %#=[ifelse(v(var.availableGlamour), get_eval(me/txt.oemit.glamourDrawn),get_eval(me/txt.oemit.glamourdrawn.last))]; @if [eq(v(var.availableGlamour),0)]=@name me=[u(me/var.emptyname)]},@pemit %#=[get_eval(me/txt/noglamour)]
+&TXT.PEMIT.GLAMOURDRAWN.LAST Balefire=You draw the last of the Balefire's glamour, the flames sputter and fade to dull embers.
+&TXT.OEMIT.GLAMOURDRAWN.LAST Balefire=%N draws the last of the Balefire's glamour, the flames sputter and fade to dull embers.
+&TXT.PEMIT.GLAMOURDRAWN Balefire=You draw the glamour from the Balefire's flames, though diminished somewhat, they continue to burn.
+&TXT.OEMIT.GLAMOURDRAWN Balefire=%n draws the glamour from the Balefire's flames, though diminished somewhat, they continue to burn.
+&TXT.NOGLAMOUR Balefire=There is no glamour left to draw from the Balefire.
+&VAR.EMPTYNAME Balefire=%x<#CC0000>Balefire%xn
+&VAR.FULLNAME Balefire=%x<#FF0000>B%x<#FF5F00>a%x<#FF8700>l%x<#FFAF00>ef%x<#FF8700>i%x<#FF5F00>r%x<#FF0000>e%xn
+&VAR.PETROL Balefire=Glamour
+&TEXT.PEMIT.NOGLAMOURLEFT Balefire=There is no [v(var.petrol)] left to draw from the [v(var.emptyname)].
+@rxlevel Balefire= Real
+@txlevel Balefire= Real
