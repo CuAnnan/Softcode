@@ -2,8 +2,7 @@
 @lock Dross Pouch Master=+DROSSPOUCH:yes|*Conn
 &DROSSPOUCH Dross Pouch Master=yes
 &CON.PARENT Dross Pouch Master=#10781
-&TRG.PAY Dross Pouch Master=@pemit *[%1]=name(%0) gave %2 to you from his [name(%#)]
-&CMD.PAY Dross Pouch Master=$+pay */*:@assert [gte(get(setr(0,v(con.parent))/balance.%#),[setr(1,ifelse(%1,%1,1))])]=@pemit %#=You do not have enough to pay %0 %q1 Dross.;@set %q0=balance.[setr(2, num(*%0))]:[add(get(%q0/balance.%q2),%q1)];@set %q0=balance.%#:[sub(get(%q0/balance.%#),%q1)];@pemit *%#=Paid %0 %q1 Dross;@pemit *%0=%n gave you %1 dross from their account.
+&CMD.PAY Dross Pouch Master=$+pay */*:@assert [lt(0, %1)]=@pemit %#=You can't pay someone a negative number, you thief.;@assert [gte(get(setr(0,v(con.parent))/balance.%#),[setr(1,ifelse(%1,%1,1))])]=@pemit %#=You do not have enough to pay %0 %q1 Dross.;@set %q0=balance.[setr(2, num(*%0))]:[add(get(%q0/balance.%q2),%q1)];@set %q0=balance.%#:[sub(get(%q0/balance.%#),%q1)];@pemit *%#=Paid %0 %q1 Dross;@pemit *%0=%n gave you %1 dross from their account.
 &CMD.BALANCE Dross Pouch Master=$+balance:@assert setr(0,get([v(con.parent)]/balance.[%#]))=@pemit %#=You have no Dross;@pemit %#=You have [%q0] Dross
 &CMD.TOPUP Dross Pouch Master=$+topup */*=*:@set [setr(0,v(con.parent))]=[setr(1,balance.[setr(2,num(*%0))])]:[add(get(%q0/%q1),%1)];@pemit %#=Topped up %0's account by %1 for %2;@pemit *%0=name(%#) topped up your account by %1 with the reason %2;@set %q0=topups.%q2:[setr(3, add(get(%q0/topups.%q2),1))];@set %q0=topups.%q2.%#.%q3:%#|%1|%2|[time()]
 &CMD.BURN Dross Pouch Master=$+burn *:@assert [gte(setr(2,get([setr(0,v(con.parent))]/[setr(1,balance.[%#])])),%0)]=@pemit %#=You don't have %0 Dross to burn.;@set %q0=%q1:[setr(3,sub(%q2,%0))];@pemit %#=You burn %0 Dross. You have %q3 remaining.
