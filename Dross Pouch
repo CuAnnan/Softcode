@@ -3,9 +3,9 @@
 &DROSSPOUCH Dross Pouch Master=yes
 &CON.PARENT Dross Pouch Master=#10781
 &TRG.PAY Dross Pouch Master=@pemit *[%1]=name(%0) gave %2 to you from his [name(%#)]
-&CMD.PAY Dross Pouch Master=$^\+pay ([a-zA-Z]+)\s?([\d]+)?$:@assert [gte(get(setr(0,v(con.parent))/balance.[%#]),[setr(1,ifelse(%2,%2,1))])]=@pemit %#=You do not have enough to pay %1 %q1 Dross.;@set %q0=balance.[num(*%1)]:[add(get(%q0/balance.[num(*%1)]),%q1)];@set %q0=balance.[num(%#)]:[sub(get(%q0/balance.[num(%#)]),%q1)];@pemit %#=Paid %1 %q1 Dross
-@set Dross Pouch Master/CMD.PAY = regexp
+&CMD.PAY Dross Pouch Master=$+pay */*:@assert [gte(get(setr(0,v(con.parent))/balance.%#),[setr(1,ifelse(%1,%1,1))])]=@pemit %#=You do not have enough to pay %0 %q1 Dross.;@set %q0=balance.[setr(2, num(*%0))]:[add(get(%q0/balance.%q2),%q1)];@set %q0=balance.%#:[sub(get(%q0/balance.%#),%q1)];@pemit *%#=Paid %0 %q1 Dross;@pemit *%0=%n gave you %1 dross from their account.
 &CMD.BALANCE Dross Pouch Master=$+balance:@assert setr(0,get([v(con.parent)]/balance.[%#]))=@pemit %#=You have no Dross;@pemit %#=You have [%q0] Dross
 &CMD.TOPUP Dross Pouch Master=$+topup */*=*:@set [setr(0,v(con.parent))]=[setr(1,balance.[setr(2,num(*%0))])]:[add(get(%q0/%q1),%1)];@pemit %#=Topped up %0's account by %1 for %2;@pemit *%0=name(%#) topped up your account by %1 with the reason %2;@set %q0=topups.%q2:[setr(3, add(get(%q0/topups.%q2),1))];@set %q0=topups.%q2.%#.%q3:%#|%1|%2|[time()]
 &CMD.BURN Dross Pouch Master=$+burn *:@assert [gte(setr(2,get([setr(0,v(con.parent))]/[setr(1,balance.[%#])])),%0)]=@pemit %#=You don't have %0 Dross to burn.;@set %q0=%q1:[setr(3,sub(%q2,%0))];@pemit %#=You burn %0 Dross. You have %q3 remaining.
-@Desc Dross Pouch Master=Conn's Dross %xhUNOFFICIAL%xn Pouch system.%r%r+pay <player> <amount>: gives <player> <amount> dross from your account%r+balance: shows your balance
+@Desc Dross Pouch Master=Conn's Dross %xhUNOFFICIAL%xn Pouch system.%r%xh+pay <player>/<amount>%xn%t%t%t%t%tgives <player> <amount> dross from your account%r%xh+balance%xn%t%t%t%t%tshows your balance%r%xh+topup <player>/<amount>=<reason>%xn%t%t%t%t%tThis command tops up <player>'s account by <amount> for <reason>. The player topping up, the player topped up, the reason, amount and time of topup are all logged.
+@set Dross Pouch Master=PARENT_OK
