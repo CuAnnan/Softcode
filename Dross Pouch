@@ -1,3 +1,4 @@
+@create Dross Pouch Master=10
 @lock Dross Pouch Master=+DROSSPOUCH:yes|*Conn
 &DROSSPOUCH Dross Pouch Master=yes
 &CON.PARENT Dross Pouch Master=#10781
