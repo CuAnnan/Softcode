@@ -1,0 +1,7 @@
++dross/pay <player>/<amount>						Gives <player> <amount> dross from your account
++dross/balance						shows your balances
++dross/topup <player>/<amount>=<reason>						This command tops up <player>'s account by <amount> for <reason>. The player topping up, the player topped up, the reason, amount and time of topup are all logged and anyone can report on it via +dross/report.
++dross/burn <amount>						Burns dross for a Cantrip, reducing your balance by <amount>.
++dross/withdraw <amount>						Removes dross from the location you have stored it.
++dross/deposit <amount>						Deposits dross somewhere safe. At present the "somewhere safe" is abstract, but this is prone to change as I refine the system.
++dross/deposit/here						This command marks the current location you're in as the spot you want to use for depositing and withdrawing your dross. It is my intention that such locations, going forward, would be obvious to people who have opted in. So be careful about doing this.
