@@ -8,33 +8,6 @@
 &CMD.BURN Dross Pouch Master=$+dross/burn *:@assert [gte(setr(2,get([setr(0,v(con.parent))]/[setr(1,dross.[%#])])),%0)]=@pemit %#=You don't have %0 Dross on hand to burn.;@set %q0=%q1:[setr(3,sub(%q2,%0))];@pemit %#=You burn %0 Dross. You have %q3 remaining.
 @Desc Dross Pouch Master=Conn's Dross %xhUNOFFICIAL%xn Pouch system.%r%xh+dross/pay <player>/<amount>%xn%t%t%t%t%t%tGives <player> <amount> dross from your account%r%xh+dross/balance%xn%t%t%t%t%t%tshows your balances%r%xh+dross/topup <player>/<amount>=<reason>%xn%t%t%t%t%t%tThis command tops up <player>'s account by <amount> for <reason>. The player topping up, the player topped up, the reason, amount and time of topup are all logged and anyone can report on it via +dross/report.%r%xh+dross/burn <amount>%xn%t%t%t%t%t%tBurns dross for a Cantrip, reducing your balance by <amount>.%r%xh+dross/withdraw <amount>%xn%t%t%t%t%t%tRemoves dross from the location you have stored it.%r%xh+dross/deposit <amount>%xn%t%t%t%t%t%tDeposits dross somewhere safe. At present the "somewhere safe" is abstract, but this is prone to change as I refine the system.%r%xh+dross/deposit/here%xn%t%t%t%t%t%tThis command marks the current location you're in as the spot you want to use for depositing and withdrawing your dross. It is my intention that such locations, going forward, would be obvious to people who have opted in. So be careful about doing this.
 &CMD.REPORT Dross Pouch Master=$+dross/report *:@assert [setr(0, num(*%0))]=%0 not found.;@pemit %#=Topups that %0 has received:%r[iter(lattr(me/topups.%q0.*), iter(get(me/##),itext(0),|,%t), ,%r)]%r==============================%rTopups that %0 has provided:%r[iter(lattr(me/topups.*.%q0.*), [name(index(##,.,2,1))]%t[iter(get(me/##),itext(0),|,%t)], ,%r)];
-&BALANCE.#18147 Dross Pouch Master=23
-&TOPUPS.#18147 Dross Pouch Master=2
-&TOPUPS.#18147.#19049.1 Dross Pouch Master=#19049|19|Tabin's zany adventures|Tue May 04 11:15:57 2021
-&BALANCE.#19049 Dross Pouch Master=32
-&TOPUPS.#19049 Dross Pouch Master=2
-&TOPUPS.#19049.#19049.1 Dross Pouch Master=#19049|19|Tabin's zany adventures|Tue May 04 11:16:00 2021
-&BALANCE.#19140 Dross Pouch Master=20
-&TOPUPS.#19140 Dross Pouch Master=2
-&TOPUPS.#19140.#19049.1 Dross Pouch Master=#19049|19|Tabin's zany adventures|Tue May 04 11:16:04 2021
 &CMD.WITHDRAW Dross Pouch Master=$+dross/withdraw *:=@assert [isnum(%0)]=@pemit %#=%1 is not a number.;@assert [lt(0, %0)]=@pemit %#=You can't pay withdraw a negative number.;@assert [eq(comp(loc(%#), setr(2,get(me/con.bank_location))),0)] = @pemit %#=You need to be at [stripansi(name(%q2))] in order to withdraw;@assert [gte(setr(1, get(setr(0, v(con.parent))/balance.%#)), %0)]=You do not have sufficient dross stashed to withdraw %0;@pemit %#=You withdraw %0 dross.;@set %q0=balance.%#:[sub(%q1, %0)];@set %q0=dross.%#:[add(%0, get(%q0/dross.%#))]
 &CMD.DEPOSIT Dross Pouch Master=$+dross/deposit *:@assert [isnum(%0)]=@pemit %#=%1 is not a number.;@assert [lt(0, %0)]=@pemit %#=You can't pay deposit a negative number.;@assert [eq(comp(loc(%#), setr(2,get(me/con.bank_location))),0)] = @pemit %#=You need to be at [stripansi(name(%q2))] in order to deposit;@assert [gte(setr(1, get(setr(0, v(con.parent))/dross.%#)), %0)]=You do not have enough dross on hand to deposit %0;@pemit %#=You deposit %0 dross;@set %q0=balance.%#:[add(get(%q0/balance.%#),%0)];@set %q0=dross.%#:[sub(%q1,%0)]
-&TOPUPS.#19049.#19049.2 Dross Pouch Master=#19049|15|Job 226|Thu May 13 12:30:42 2021
-&DROSS.#19049 Dross Pouch Master=2
-&CON.BANK_LOCATION Dross Pouch Master=#19923
-&CMD.BANK_LOCATION Dross Pouch Master=$+dross/deposit/here:@set [v(con.parent)]=var.%#.bank_location:[setr(0,loc(%#))];@pemit %#=You set your dross bank to [name(%q0)];
-&VAR.#19049.BANK_LOCATION Dross Pouch Master=#19924
-&BALANCE.#3613 Dross Pouch Master=3
-&TOPUPS.#3613 Dross Pouch Master=2
-&TOPUPS.#3613.#3613.1 Dross Pouch Master=#3613|1|Won from Conn in a wager|Thu May 13 16:11:43 2021
-&BALANCE.#15460 Dross Pouch Master=1
-&TOPUPS.#15460 Dross Pouch Master=1
-&TOPUPS.#15460.#19049.1 Dross Pouch Master=#19049|1|Crystal Tree|Thu May 13 19:26:30 2021
-&TOPUPS.#3613.#19049.2 Dross Pouch Master=#19049|2|Crystal Tree|Thu May 13 19:26:43 2021
-&TOPUPS.#19140.#19049.2 Dross Pouch Master=#19049|1|Crystal Tree|Thu May 13 19:26:51 2021
-&BALANCE.#20525 Dross Pouch Master=24
-&TOPUPS.#20525 Dross Pouch Master=2
-&TOPUPS.#20525.#19049.1 Dross Pouch Master=#19049|5|Crystal Tree|Thu May 13 19:27:19 2021
-&TOPUPS.#20525.#19049.2 Dross Pouch Master=#19049|19|Timand's Adventures|Thu May 13 19:27:28 2021
-&TOPUPS.#18147.#19049.2 Dross Pouch Master=#19049|4|Crystal Tree|Thu May 13 19:27:40 2021
 @set Dross Pouch Master=PARENT_OK
