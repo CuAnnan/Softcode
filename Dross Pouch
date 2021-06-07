@@ -1,5 +1,7 @@
 @create Dross Pouch Master=10
-&CON.PARENT Dross Pouch Master=#10781
+@create Dross Pouch Ledger=10
+
+&CON.PARENT Dross Pouch Master=Dross Pouch Master
 &CMD.PAY Dross Pouch Master=$+dross/pay */*:@assert [isnum(%1)]=@pemit %#=%1 is not a number.;@assert [lt(0, %1)]=@pemit %#=You can't pay someone a negative number, you thief.;@assert [gte(get(setr(0,v(con.parent))/dross.%#),[setr(1,ifelse(%1,%1,1))])]=@pemit %#=You do not have enough Dross on hand to pay %0 %q1 Dross.;@set %q0=dross.[setr(2, num(*%0))]:[add(get(%q0/dross.%q2),%q1)];@set %q0=dross.%#:[sub(get(%q0/dross.%#),%q1)];@pemit *%#=Paid %0 %q1 Dross;@pemit *%0=%n gave you %1 dross from their personal stash.
 &CMD.BALANCE Dross Pouch Master=$+dross/balance:@assert [or(setr(0,get(setr(1,v(con.ledger))/balance.%#)), setr(2, get(%q1/dross.%#)))]=@pemit %#=You have no Dross;@pemit %#=You have [%q0] Dross stashed safely and [ifelse(%q2,%q2,0)] on hand.
 &CMD.TOPUP Dross Pouch Master=$+dross/topup */*=*:@assert [isnum(%1)]=@pemit %#=%1 is not a number.;@set [setr(0,v(con.parent))]=[setr(1,balance.[setr(2,num(*%0))])]:[add(get(%q0/%q1),%1)];@pemit %#=Topped up %0's account by %1 for %2;@pemit *%0=name(%#) topped up your account by %1 with the reason %2;@set %q0=topups.%q2:[setr(3, add(get(%q0/topups.%q2),1))];@set %q0=topups.%q2.%#.%q3:%#|%1|%2|[time()]
@@ -10,6 +12,7 @@
 &CMD.DEPOSIT Dross Pouch Master=$+dross/deposit *:@assert [isnum(%0)]=@pemit %#=%1 is not a number.;@assert [lt(0, %0)]=@pemit %#=You can't pay deposit a negative number.;@assert [eq(comp(loc(%#), setr(2,ifelse(setr(3, get(v(con.ledger)/var.%#.bank_location)),%q3,get(v(con.parent)/con.bank_location))),0)]= @pemit %#=You need to be at [stripansi(name(%q2))] in order to deposit;@assert [gte(setr(1, get(setr(0, v(con.ledger))/dross.%#)), %0)]=You do not have enough dross on hand to deposit %0;@pemit %#=You deposit %0 dross;@set %q0=balance.%#:[add(get(%q0/balance.%#),%0)];@set %q0=dross.%#:[sub(%q1,%0)]
 &CON.BANK_LOCATION Dross Pouch Master=#19923
 &CMD.BANK_LOCATION Dross Pouch Master=$+dross/deposit/here:@set [v(con.ledger)]=var.bank_location.%#:[setr(0,loc(%#))];@pemit %#=You set your dross bank to [name(%q0)];
-&CON.LEDGER Dross Pouch Master=#17337
+&CON.LEDGER Dross Pouch Master=Dross Pouch Ledger
 @set Dross Pouch Master=OPAQUE
 @set Dross Pouch Master=PARENT_OK
+give Dross Pouch Master=Dross Pouch Ledger
