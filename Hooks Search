@@ -3,7 +3,7 @@
 &CMD.HOOK.LIST Hooks=$+hook/list:@pemit %#=Your hooks are: [get(u(con.ledger)/hooks.%#)]
 &CMD.HOOK.ADD Hooks=$+hook/add *:@set [setr(0,u(con.ledger))]=hooklist:[setunion(get(%q0/hooklist),%0,%,,%,)]; @set %q0=hooks.%#:[setunion(get(%q0/hooks.%#),%0,%,,%,)];@pemit %#=Added %0 to your hook list
 &CMD.HOOK.SHOWALL Hooks=$+hook/showall:@pemit %#=Hooks in use: [get(u(con.ledger)/hooklist)]
-&CMD.HOOK.SEARCH Hooks=$+hook/search *:@pemit %#=[iter(lattr(setr(0,u(con.ledger))/hooks.*),if(setinter(u(%q0/##),%0,%,,%,),name(index(##,.,2,1))))]
+&CMD.HOOK.SEARCH Hooks=$+hook/search *:@pemit %#=Players with the %0 hook: [iter(lattr(setr(0,u(con.ledger))/hooks.*),if(setinter(u(%q0/##),%0,%,,%,),name(index(##,.,2,1))))]
 &CMD.HOOK.REMOVE Hooks=$+hook/remove *:@set [setr(0,u(con.ledger))]=hooks.%#:[setdiff(get(%q0/hooks.%#),%0,%,,%,)];@pemit %#=Removed %0 from your hook list
 &CMD.HOOK.HELP Hooks=$+hook/help:@pemit %#=%r--------- Hook system help ----------%r%xh+hook/add <hook>[,<hook>,<hook>]%xn: Adds one or more hook to your character%r%xh+hook/remove <hook>[,<hook>,<hook>]%xn: Removes one or more hook from your character%r%xh+hook/list%xn: Shows your list of hooks%r%xh+hook/showall%xn: Shows all hooks that have ever been used. Not all hooks will be active, characters will add and remove them.%r%xh+hook/search <hook>[,<hook>,<hook>]%xn: Searches for a character who has at least one hook from the provided list. %r
 @rxlevel Hooks=Real
