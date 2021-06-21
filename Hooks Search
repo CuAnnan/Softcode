@@ -1,0 +1,5 @@
+&CON.LEDGER Hooks=#2682
+&CMD.HOOK.LIST Hooks=$+hook/list:@pemit %#=Your hooks are: [get(u(con.ledger)/hooks.%#)]
+&CMD.HOOK.ADD Hooks=$+hook/add *:@set [setr(0,u(con.ledger))]=hooklist:[setunion(get(%q0/hooklist),%0,%,,%,)]; @set %q0=hooks.%#:[setunion(get(%q0/hooks.%#),%0,%,,%,)];@pemit %#=Added %0 to your hook list
+&CMD.HOOK.SHOWALL Hooks=$+hook/showall:@pemit %#=Hooks in use: [get(u(con.ledger)/hooklist)]
+&CMD.HOOK.SEARCH Hooks=$+hook/search *:@pemit %#=[iter(lattr(setr(0,u(con.ledger))/hooks.*),if(setinter(u(%q0/##),%0,%,,%,),name(index(##,.,2,1))))]
