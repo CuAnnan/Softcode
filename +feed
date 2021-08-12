@@ -1,0 +1,24 @@
+@create zobj=10
+&CON.PARENT.VAMPIRE zobj=#992
+&CMD.FEED zobj=$+feed:@assert [not(comp(parent(setr(0,%#)), v(con.parent.vampire)))]={@sudo %l=@pemit %q0=You are not a vampire};
+&CMD.FEED.SECURITY zobj=$+feed/security:@assert [not(comp(parent(setr(0,%#)), v(con.parent.vampire)))]={@sudo %l=@pemit %q0=You are not a vampire};@sudo setr(1,%l)=@pemit %q0=The security for [name(%q1)] is [u(%q1/var.security)]
+&VAR.TEST zobj=test
+@rxlevel zobj=Real
+@txlevel zobj=Real Admin Chimera Wraith
+@set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER
+
+Type: ROOM Flags: SAFE OOCAREA
+Owner: Alejandro  Key: *UNLOCKED* Credits: 0
+ZoneList: zobj(#2484s[yzZ])
+RxLevel: Real LowPen MidPen HighPen
+TxLevel: Real Admin LowPen MidPen HighPen Chimera
+Parent: tempParent(#460s[c])
+ModifiedStamp: Fri Aug 13 00:11:20 2021
+CreatedStamp: Thu Aug 12 21:32:31 2021
+VAR.LOCAL.TEST: test
+Contents:
+Alejandro(#382P-c~>sO<[Qt])
+tempParent(#460s[c])
+zobj(#2484s[yzZ])
+Exits:
+Out;o(#2304Es[c])
