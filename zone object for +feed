@@ -1,8 +1,5 @@
 @create zobj=10
 &CON.PARENT.VAMPIRE zobj=#992
-&CMD.FEED zobj=$+feed:@assert [not(comp(parent(setr(0,%#)), v(con.parent.vampire)))]={@sudo %l=@pemit %q0=You are not a vampire};@emit [lzone(%l)]
-&CMD.FEED.SECURITY zobj=$+feed/security:@assert [not(comp(parent(setr(0,%#)), v(con.parent.vampire)))]={@sudo %l=@pemit %q0=You are not a vampire};@sudo setr(1,%l)=@pemit %q0=The security for [name(%q1)] is [u(%q1/var.security)]
-&VAR.TEST zobj=test
 @Desc zobj=This is a test
 &CON.DOMAIN.LISTS zobj=#429
 &CMD.DOMAIN.CLAIM zobj=$+domain/claim:@assert [u(fnc.domain.unowned, %#, %l)]={@sudo %l=@pemit [r(user)]=This zone is already claimed as domain.};@set [r(ledger)]=[r(prefix)].owner:[r(user)];@set [r(ledger)]=[setr(baseprefix,index(r(prefix),.,1,2))]:[setunion(u([r(ledger)]/[r(baseprefix)]), parent(r(user)))];@set [r(ledger)]=[r(prefix)].members:[r(user)];@sudo %l=@pemit [r(user)]=You have claimed [name(%#)].
@@ -13,12 +10,18 @@
 &CMD.DOMAIN.REMOVE zobj=$+domain/remove *:@include me/inc.domain.own=[setr(user, %#)],%l;[pushregs(0)];@set [r(ledger)]=[r(prefix)].members:[setdiff(u([r(ledger)]/[r(prefix)].members), parse(%0,num(*##),%,))];@sudo %l=@pemit [r(user)]=Removed %0 from the domain.
 &CMD.DOMAIN.SETSTATS zobj=$+domain/set *=*:@include me/inc.domain.own=[setr(user, %#)],%l;[pushregs(0)];@assert [member(security rating, setr(key,trim(%0)))]={@sudo %l=@pemit [r(user)]=%0 is not a domain setting.;};@set [r(ledger)]=[r(prefix)].[r(key)]:[floor(%1)];@sudo %l=@pemit [r(user)]=Set domain [r(key)] to %1
 &FNC.DOMAIN.UNOWNED zobj=[not(u(setr(fullpath,setr(ledger,u(con.domain.lists))/[setr(prefix,domain.[%1].[parent(setr(user, %0))])]).owner))][pushregs(1)]%r
-&CMD.TEST zobj=$+test:[u(fnc.domain.unowned, %#, %l)];@sudo %l=@pemit [r(user)]=index(r(prefix),.,1,2)
+&CMD.TEST zobj=$+test:setr(user, %#);@sudo %l=@pemit r(user)=test;@sudo %l=@pemit r(user)=test;
 &CMD.DOMAIN.SENSE zobj=$+domain/check:[setr(isunclaimed, u(fnc.domain.unowned, %#, %l))];@sudo %l=@pemit [r(user)]=This area is [if(r(isunclaimed),un)]claimed.
 &CMD.DOMAIN.WHO zobj=$+domain/who:@if [u(fnc.domain.unowned, %#, %l)]={@sudo %l=@pemit [r(user)]=This zone is unclaimed},{@sudo %l=@pemit [r(user)]=This zone is already claimed by [name(u([r(ledger)]/[r(prefix)].owner))].}
 &CMD.DOMAIN.REPORT zobj=$+domain/report:@assert [not(u(fnc.domain.unowned, %#, %l))]=@sudo %l=@pemit [r(user)]=This domain is unclaimed
-&CMD.DOMAIN.DETAILS zobj=$+domain/details:@assert [not(u(fnc.domain.unowned, %#, %l))]=@sudo %l=@pemit [r(user)]=This domain is unclaimed;@assert [member(u([r(ledger)]/[r(prefix)].members), r(user))]=@sudo %l=@pemit [r(user)]=You are not a member of this domain.;[setr(reportText, u(fnc.domain.spherereport))];@sudo %l=@pemit [r(user)]=Report:%r[r(reportText)];
+&CMD.DOMAIN.DETAILS zobj=$+domain/details:@assert [not(u(fnc.domain.unowned, %#, %l))]=@sudo %l=@pemit [r(user)]=This domain is unclaimed;@assert [u(fnc.domain.userismember)]=@sudo %l=@pemit [r(user)]=You are not a member of this domain.;[setr(reportText, u(fnc.domain.spherereport))];@sudo %l=@pemit [r(user)]=Report:%r[r(reportText)];
 &FNC.DOMAIN.SPHEREREPORT zobj=Owner:[name(u([r(fullpath)].owner))]%rMembers: [parse(u(r(fullpath).members), name(##), ,%,%b)][if(setr(security, u([r(fullpath)].security)),%rSecurity: [r(security)])][if(setr(rating, u([r(fullpath)].rating)),%rRating: [r(rating)])]
+&VAR.SECURITY zobj=6
+&FNC.DOMAIN.USERISMEMBER zobj=[member(u([r(ledger)]/[r(prefix)].members), r(user))][pushregs(1)]
+&CMD.FEED.METHOD zobj=$+feed/method *:@set [u(CON.DOMAIN.LISTS)]=var.feeding.method.[setr(user,%#)]:%0;@sudo %l={@pemit [r(user)]=You have set your feeding method to %0};
+&CMD.FEED.POOL zobj=$+feed/pool *:@set [u(CON.DOMAIN.LISTS)]=var.feeding.pool.[setr(user,%#)]:%0;@sudo %l={@pemit [r(user)]=You have set your feeding pool to %0};
+&FNC.FEED.SECURITY zobj=[ifelse(r(vacant), u(var.security), ifelse(userdomain, max(3, diff(u(var.security), u(u(r(fullpath).rating)))), add(u(var.security), u(u(fullpath).security))))]
+&FNC.FEED.HERE zobj=$+feed/here:[setr(vacant, u(fnc.domain.unowned, %#, %l))];[pushregs(0)];[setr(member,u(fnc.domain.userismember))];@sudo %l=@pemit [r(user)]=+roll [u([r(ledger)]/var.feeding.pool.[r(user)])] vs [u(fnc.feed.security)]
 @rxlevel zobj=Real
 @txlevel zobj=Real Admin Chimera Wraith
 @set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER
