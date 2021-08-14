@@ -24,4 +24,4 @@
 &FNC.FEED.HERE zobj=$+feed/here:[setr(vacant, u(fnc.domain.unowned, %#, %l))];[pushregs(0)];[setr(member,u(fnc.domain.userismember))];[setr(roll,+roll [u([r(ledger)]/var.feeding.pool.[r(user)])] vs [u(fnc.feed.security)])];@sudo [r(user)]=[r(roll)]
 @rxlevel zobj=Real
 @txlevel zobj=Real Admin Chimera Wraith
-@set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER VERBOSE TRACE
+@set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER INHERIT
