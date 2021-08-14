@@ -21,7 +21,7 @@
 &CMD.FEED.METHOD zobj=$+feed/method *:@set [u(CON.DOMAIN.LISTS)]=var.feeding.method.[setr(user,%#)]:%0;@sudo %l={@pemit [r(user)]=You have set your feeding method to %0};
 &CMD.FEED.POOL zobj=$+feed/pool *:@set [u(CON.DOMAIN.LISTS)]=var.feeding.pool.[setr(user,%#)]:%0;@sudo %l={@pemit [r(user)]=You have set your feeding pool to %0};
 &FNC.FEED.SECURITY zobj=[ifelse(r(vacant), u(var.security), ifelse(userdomain, max(3, diff(u(var.security), u(u(r(fullpath).rating)))), add(u(var.security), u(u(fullpath).security))))]
-&FNC.FEED.HERE zobj=$+feed/here:[setr(vacant, u(fnc.domain.unowned, %#, %l))];[pushregs(0)];[setr(member,u(fnc.domain.userismember))];@sudo %l=@pemit [r(user)]=+roll [u([r(ledger)]/var.feeding.pool.[r(user)])] vs [u(fnc.feed.security)]
+&FNC.FEED.HERE zobj=$+feed/here:[setr(vacant, u(fnc.domain.unowned, %#, %l))];[pushregs(0)];[setr(member,u(fnc.domain.userismember))];[setr(roll,+roll [u([r(ledger)]/var.feeding.pool.[r(user)])] vs [u(fnc.feed.security)])];@sudo [r(user)]=[r(roll)]
 @rxlevel zobj=Real
 @txlevel zobj=Real Admin Chimera Wraith
-@set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER
+@set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER VERBOSE TRACE
