@@ -20,6 +20,8 @@
 &CMD.DOMAIN.REMOVE.USER zobj=$+domain/removemember *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.remove.members=%1, %0
 &CMD.DOMAIN.REMOVE.USERS zobj=$+domain/removemembers *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.remove.members=%1, %0
 &INC.DOMAIN.REMOVE.MEMBERS zobj=@set [r(ledger)]=[r(prefix)].members:[setdiff([u([r(ledger)]/[r(prefix)].members)],parse(%0,num(*##),%,))];@sudo %l=@pemit [r(user)]=Removed member(s) %0 from domain %1
+&CMD.DOMAIN.SET zobj=$+domain/set */*=*:@include me/inc.domain.set.registers=%0;@include me/inc.precheck.domain.misc.attributes=setr(key,trim(%1)),setr(val,%2);@set [r(ledger)]=[r(prefix)].misc.[r(key)]:[r(val)];@sudo %l=@pemit [r(user)]=Set [r(key)] to [r(val)] on domain %0
+&INC.PRECHECK.DOMAIN.MISC.ATTRIBUTES zobj=@if [match(security rating, %0)]=@assert [isnum(%1)]=@sudo %l=@pemit [r(user)]=The value for [r(key)] must be a number. [r(val)] provided.
 @rxlevel zobj=Real
 @txlevel zobj=Real Admin Chimera Wraith
 @set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER INHERIT
