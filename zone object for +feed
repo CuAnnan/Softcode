@@ -14,9 +14,12 @@
 &INC.DOMAIN.ADD.ROOM zobj=@set [r(ledger)]=DOMAINS.[r(sphere)].[r(user)].[r(domain)].ROOMS:[setunion(u([r(ledger)]/DOMAINS.[r(sphere)].[r(user)].[r(domain)].rooms),%0)];@set [r(ledger)]=DOMAINS.[%0]:[setunion(u([r(ledger)]/DOMAINS.[%0]),[r(sphere)])];@sudo %l=@pemit r(user)=You have claimed [name(%#)] as part of your domain %1.
 &INC.DOMAIN.SET.REGISTERS zobj=[setq(domain, tr(%0, %b, _))];[setq(ledger, u(con.domain.lists))];[setq(sphere, parent(setr(user, %#)))];[setq(prefix, domains.[r(sphere)].[r(user)].[r(domain)])];[pushregs(1)];
 &CMD.DOMAIN.REMOVE.ROOM zobj=$+domain/removeroom *:@include me/inc.domain.set.registers=%0;@include me/inc.domain.remove.room.from.domain=%l;@sudo %l=@pemit [r(user)]=Removed [name(%l)] from %0;
-&CMD.DOMAIN.ADD.USER zobj=$+domain/adduser *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.addusers=%1, %0
-&INC.DOMAIN.ADDUSERS zobj=@set [r(ledger)]=[r(prefix)].members:[setunion([u([r(ledger)]/[r(prefix)].members)],parse(%0,num(*##),%,))];@sudo %l=@pemit [r(user)]=Added user(s) %0 to domain %1
-&CMD.DOMAIN.ADD.USERS zobj=$+domain/addusers *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.addusers=%1, %0
+&CMD.DOMAIN.ADD.USER zobj=$+domain/addmember *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.addusers=%1, %0
+&INC.DOMAIN.ADDUSERS zobj=@set [r(ledger)]=[r(prefix)].members:[setunion([u([r(ledger)]/[r(prefix)].members)],parse(%0,num(*##),%,))];@sudo %l=@pemit [r(user)]=Added member(s) %0 to domain %1
+&CMD.DOMAIN.ADD.USERS zobj=$+domain/addmembers *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.addusers=%1, %0
+&CMD.DOMAIN.REMOVE.USER zobj=$+domain/removemember *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.remove.members=%1, %0
+&CMD.DOMAIN.REMOVE.USERS zobj=$+domain/removemembers *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.remove.members=%1, %0
+&INC.DOMAIN.REMOVE.MEMBERS zobj=@set [r(ledger)]=[r(prefix)].members:[setdiff([u([r(ledger)]/[r(prefix)].members)],parse(%0,num(*##),%,))];@sudo %l=@pemit [r(user)]=Removed member(s) %0 from domain %1
 @rxlevel zobj=Real
 @txlevel zobj=Real Admin Chimera Wraith
-@set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER INHERIT VERBOSE TRACE
+@set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER INHERIT
