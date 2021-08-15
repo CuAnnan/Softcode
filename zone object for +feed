@@ -2,12 +2,12 @@
 &CON.PARENT.VAMPIRE zobj=#992
 @Desc zobj=This is a test
 &CON.DOMAIN.LISTS zobj=#429
-&CMD.DOMAIN.CLAIM zobj=$+domain/claim *:@include me/inc.domain.set.registers=%0;@assert [u(fnc.domain.room.is.vacant)]={@sudo %l=@pemit [r(user)]=This zone is already claimed as part of a domain.};@assert [!hasattr(r(ledger)/domains.[r(sphere)].[r(user)].[setr(domain, tr(%0, %b, _))].name)]={@sudo %l=@pemit r(user)=You already have a domain named %0.};@set r(ledger)=domains.[r(sphere)].[r(user)].[r(domain)].name:%0;@set r(ledger)=domains.[r(sphere)].[r(user)].[r(domain)].owner:[r(user)];@set r(ledger)=domains.[r(sphere)].[r(user)].[r(domain)].members:[r(user)];@include me/inc.domain.add.room=%l,%0;
+&CMD.DOMAIN.CLAIM zobj=$+domain/claim *:@include me/inc.domain.set.registers=%0;@assert [u(fnc.domain.room.is.vacant)]={@sudo %l=@pemit [r(user)]=This zone is already claimed as part of a domain.};@assert [!hasattr(r(ledger)/domains.[r(sphere)].[r(user)].[setr(domain, tr(%0, %b, _))].name)]={@sudo %l=@pemit r(user)=You already have a domain named %0.};@set r(ledger)=domains.[r(sphere)].[r(user)].[r(domain)].name:%0;@set r(ledger)=domains.[r(sphere)].[r(user)].[r(domain)].owner:[r(user)];@include me/inc.domain.add.room=%l,%0;@include me/fnc.domain.addusers=[r(user)];
 &VAR.SECURITY zobj=6
 &CMD.FEED.METHOD zobj=$+feed/method *:@set [u(CON.DOMAIN.LISTS)]=var.feeding.method.[setr(user,%#)]:%0;@sudo %l={@pemit [r(user)]=You have set your feeding method to %0};
 &CMD.FEED.POOL zobj=$+feed/pool *:@set [u(CON.DOMAIN.LISTS)]=var.feeding.pool.[setr(user,%#)]:%0;@sudo %l={@pemit [r(user)]=You have set your feeding pool to %0};
-&FNC.FEED.SECURITY zobj=[ifelse(r(vacant), u(var.security), ifelse(userdomain, max(3, diff(u(var.security), u(u(r(fullpath).rating)))), add(u(var.security), u(u(fullpath).security))))]
-&FNC.FEED.HERE zobj=$+feed/here:[setr(vacant, u(fnc.domain.unowned, %#, %l))];[pushregs(0)];[setr(member,u(fnc.domain.userismember))];[setr(roll,+roll [u([r(ledger)]/var.feeding.pool.[r(user)])] vs [u(fnc.feed.security)])];@sudo [r(user)]=[r(roll)]
+&FNC.FEED.SECURITY zobj=[ifelse(u(fnd.domain.room.is.vacant), u(var.security), ifelse(domain, max(3, diff(u(var.security), u(u(r(domain).rating)))), add(u(var.security), u(u(domain).security))))]
+&FNC.FEED.HERE zobj=$+feed/here:@include me/inc.domain.set.registers;[setr(domain,u(fnc.domain.room.belongs.to.member.domain))];[setr(roll,+roll [u([r(ledger)]/var.feeding.pool.[r(user)])] vs [u(fnc.feed.security)])];@sudo [r(user)]=[r(roll)]
 &FNC.DOMAIN.ROOM.IS.VACANT zobj=[not(match(u([r(ledger)]/domains.[%l]),[r(sphere)]))]
 &INC.DOMAIN.REMOVE.ROOM.FROM.DOMAIN zobj=@set [r(ledger)]=domains.[%l]:[setdiff(u([r(ledger)]/domains.[%l]), [r(sphere)])];@set [r(ledger)]=domains.[r(sphere)].[r(user)].[r(domain)].rooms:[setdiff(u([r(ledger)]/domains.[r(sphere)].[r(user)].[r(domain)].rooms), %l)];
 &CMD.DOMAIN.ADD.ROOM zobj=$+domain/addroom *:@include me/inc.domain.set.registers=%0;@assert [u(fnc.domain.room.is.vacant)]={@sudo %l=@pemit [r(user)]=This zone is already claimed as part of a domain.};@include me/inc.domain.add.room=%l,%0;
@@ -15,13 +15,18 @@
 &INC.DOMAIN.SET.REGISTERS zobj=[setq(domain, tr(%0, %b, _))];[setq(ledger, u(con.domain.lists))];[setq(sphere, parent(setr(user, %#)))];[setq(prefix, domains.[r(sphere)].[r(user)].[r(domain)])];[pushregs(1)];
 &CMD.DOMAIN.REMOVE.ROOM zobj=$+domain/removeroom *:@include me/inc.domain.set.registers=%0;@include me/inc.domain.remove.room.from.domain=%l;@sudo %l=@pemit [r(user)]=Removed [name(%l)] from %0;
 &CMD.DOMAIN.ADD.USER zobj=$+domain/addmember *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.addusers=%1, %0
-&INC.DOMAIN.ADDUSERS zobj=@set [r(ledger)]=[r(prefix)].members:[setunion([u([r(ledger)]/[r(prefix)].members)],parse(%0,num(*##),%,))];@sudo %l=@pemit [r(user)]=Added member(s) %0 to domain %1
+&INC.DOMAIN.ADDUSERS zobj=@include me/fnc.domain.addusers=%0;@sudo %l=@pemit [r(user)]=Added member(s) %0 to domain %1
 &CMD.DOMAIN.ADD.USERS zobj=$+domain/addmembers *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.addusers=%1, %0
 &CMD.DOMAIN.REMOVE.USER zobj=$+domain/removemember *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.remove.members=%1, %0
 &CMD.DOMAIN.REMOVE.USERS zobj=$+domain/removemembers *=*:@include me/inc.domain.set.registers=%0;@include me/inc.domain.remove.members=%1, %0
-&INC.DOMAIN.REMOVE.MEMBERS zobj=@set [r(ledger)]=[r(prefix)].members:[setdiff([u([r(ledger)]/[r(prefix)].members)],parse(%0,num(*##),%,))];@sudo %l=@pemit [r(user)]=Removed member(s) %0 from domain %1
+&INC.DOMAIN.REMOVE.MEMBERS zobj=@set [r(ledger)]=[r(prefix)].members:[setdiff([u([r(ledger)]/[r(prefix)].members)],setr(numbers,parse(%0,num(*##),%,)))];@dolist [r(numbers)]={@set [r(ledger)]=domains.memberships.[##]:[setdiff(u([r(ledger)]/domains.memberships.[##]),[r(prefix)])]};@sudo %l=@pemit [r(user)]=Removed member(s) %0 from domain %1
 &CMD.DOMAIN.SET zobj=$+domain/set */*=*:@include me/inc.domain.set.registers=%0;@include me/inc.precheck.domain.misc.attributes=setr(key,trim(%1)),setr(val,%2);@set [r(ledger)]=[r(prefix)].misc.[r(key)]:[r(val)];@sudo %l=@pemit [r(user)]=Set [r(key)] to [r(val)] on domain %0
 &INC.PRECHECK.DOMAIN.MISC.ATTRIBUTES zobj=@if [match(security rating, %0)]=@assert [isnum(%1)]=@sudo %l=@pemit [r(user)]=The value for [r(key)] must be a number. [r(val)] provided.
+&CMD.DOMAIN.HELP zobj=$+domain/help:[setq(0, %#)];@sudo %l=@pemit %q0=[wrap(u(con.helptext), 80)]
+&CON.HELPTEXT zobj=Liberation MUSH Domain System Beta%r%rThe domain system is set in place to facilitate vampire feeding and to act as a catch all for the systems that use security and size to describe their scope.%r%r%xh+domain/claim <name>%xn Starts a domain in the room you're in with a given name. The name is mandatory and, at present, it cannot be changed.%r%r%xh+domain/addroom <name>%xn Adds the room you are in to the specified domain.%r%r%xh+domain/removeroom <name>%xn Removes the room you are in from the specified domain.%r%r%xh+domain/addmember <name>=<player>%[, <player>....%]%xn Adds a list of players to the specified domain%r%r%xh+domain/addmembers <name>=<player>%[, <player>....%]%xn Adds a list of players to the specified domain%r%r%xh+domain/set <name>/<key>=<value>%xn Sets a property of the specified domain. Some of these are specific, like rating and security, but you can also add arbitrary keys and values.
+&FNC.DOMAIN.ADDUSERS zobj=@set [r(ledger)]=[r(prefix)].members:[setunion([u([r(ledger)]/[r(prefix)].members)],setr(numbers, parse(%0,num(*##),%,)))];@dolist [r(numbers)] = @set [r(ledger)]=domains.memberships.[##]:[setunion(u([r(ledger)]/domains.memberships.[##]),[r(prefix)])];
+&FNC.DOMAIN.ROOM.BELONGS.TO.MEMBER.DOMAIN zobj=[setq(domainprefix,0)];@dolist/inline [u(setr(ledger,u(con.domain.lists))/domains.memberships.[%#])]={@if [match(u([r(ledger)]/##.rooms),%l)]=[setq(domainprefix,##)]};[pushregs(1)]
+&CMD.TEST zobj=$+test:@include zobj/fnc.domain.room.belongs.to.member.domain;@emit [r(domainprefix)]
 @rxlevel zobj=Real
 @txlevel zobj=Real Admin Chimera Wraith
 @set zobj=ZONEPARENT ZONECONTENTS SAFE ZONEMASTER INHERIT
